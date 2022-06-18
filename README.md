@@ -18,7 +18,7 @@
 - `notice_number` 는 auto incrementing `id` 와 `major_province`, `minor_province` 를 조합하여 서버에서 내려줍니다.
 
 ### Upload
-- Client 에서 서버에 동물 정보를 업로드하기 위한 Api 입니다.
+- Client 에서 서버에 동물 정보를 업로드하기 위한 Api 입니다. 이미지와 몇몇 정보들을 서버에 업로드하면, 서버는 해당 이미지를 S3 에 업로드하고, S3 에 저장된 Path 와 다른 정보들을 DB 에 저장하게 됩니다.
 - `last_datetime_of_notice` 는 Date 형식으로 넣어주면 됩니다. e.g. 2022-07-30
 - `major_province` 와 `minor_province` 의 경우, 서울과 같은 시인 경우 모두 시를 넣어주면 됩니다. e.g. 서울인 경우, 양쪽 모두 서울 명시.
 - 이외의 경우에는 도, 군이 각각 들어갑니다. e.g. `major_province: 경남`, `minor_province: 합천`
