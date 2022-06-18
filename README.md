@@ -22,3 +22,13 @@
 - `major_province` 와 `minor_province` 의 경우, 서울과 같은 시인 경우 모두 시를 넣어주면 됩니다. e.g. 서울인 경우, 양쪽 모두 서울 명시.
 - 이외의 경우에는 도, 군이 각각 들어갑니다. e.g. `major_province: 경남`, `minor_province: 합천`
 - 해당 정보들로 `notice_number` 가 결정되기 때문에 반드시 필요합니다. 
+
+---
+## 기타 (DB)
+- DB 로는 MySQL 8.0 을 사용하며, 가볍게 Docker 를 이용해서 띄웁니다.
+- 한글을 사용하기 때문에 추가적인 옵션을 추가해서 띄웁니다.
+```
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=mysql -d -p 3306:3306 mysql:8.0 \
+	--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+```
+- `snu` 라는 Database 명, `animals` 라는 Table 명을 각각 사용합니다.
