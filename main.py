@@ -1,6 +1,5 @@
 from fastapi import FastAPI, UploadFile, HTTPException
 import uvicorn
-from schema import AnimalInfos, UploadResult
 import pymysql
 import os, uuid
 from utils.db import get_conn
@@ -21,16 +20,40 @@ async def get_animals(num: int):
                 sql = 'SELECT * FROM `animals` ORDER BY id DESC LIMIT {}'.format(num)
                 cursor.execute(sql)
                 animals = cursor.fetchall()
+
+                # If no data, return empty list
+                if not animals:
+                    return {
+                            "animals": animals
+                    }
+                
+                # If data
+                result = []
+                for animal in animals:
+                    result.append(
+                        {
+                            "image_url": "{}".format(animal['image_url']),
+                            "notice_number": "{}-{}-{}".format(animal['major_province'], animal['minor_province'], str(animal['id']).zfill(5)),
+                            "kind": "{}".format(animal['kind']),
+                            "located_at": "{}".format(animal['located_at']),
+                            "feature": "{}".format(animal['feature']),
+                            "status": "{}".format(animal['status']),
+                            "sex": "{}".format(animal['sex']),
+                            "last_datetime_of_notice": "{}".format(animal['last_datetime_of_notice']),
+                            "created_at": "{}".format(animal['created_at'])
+                        }
+                    )                
                 return {
-                    "animals": animals
+                    "animals": result
                 }
     except Exception as e:
         print(e)
 
 
 @app.post("/animals/v2", status_code=201)
-async def upload_animal(file: UploadFile, notice_number: str, kind: str, located_at: str, feature: str,
-                        status: str, last_datetime_of_notice: str) -> None:
+async def upload_animal(file: UploadFile, kind: str, located_at: str, feature: str,
+                        status: str, sex : str, major_province: str, minor_province: str,
+                        last_datetime_of_notice: str) -> None:
     if file.content_type != "image/jpeg":
         raise HTTPException(status_code=400, detail="Format should be jpeg")
 
@@ -59,31 +82,37 @@ async def upload_animal(file: UploadFile, notice_number: str, kind: str, located
             with conn.cursor() as cursor:
                 insert_sql = '''
                 INSERT INTO `animals` (
+                    `major_province`,
+                    `minor_province`,
                     `image_url`,
-                    `notice_number`,
                     `kind`,
                     `located_at`,
                     `feature`,
                     `status`,
+                    `sex`,
                     `last_datetime_of_notice`
                 )
                 VALUES (
+                    %s, -- major_province
+                    %s, -- minor_province
                     %s, -- image_url
-                    %s, -- notice_number
                     %s, -- kind
                     %s, -- located_at
                     %s, -- feature
                     %s, -- status
+                    %s, -- sex
                     %s -- last_datetime_of_notice
                 )
                 '''
                 cursor.execute(insert_sql, (
+                    major_province,
+                    minor_province,
                     "https://{}.s3.ap-northeast-2.amazonaws.com/{}".format(BUCKET_NAME, hashed_filename_with_ext),
-                    notice_number,
                     kind,
                     located_at,
                     feature,
                     status,
+                    sex,
                     last_datetime_of_notice
                 ))
             conn.commit()
