@@ -28,7 +28,7 @@
 - DB 로는 MySQL 8.0 을 사용하며, 가볍게 Docker 를 이용해서 띄웁니다.
 - 한글을 사용하기 때문에 추가적인 옵션을 추가해서 띄웁니다.
 ```
-docker run --name mysql -e MYSQL_ROOT_PASSWORD=mysql -d -p 3306:3306 mysql:8.0 \
+$ docker run --name mysql -e MYSQL_ROOT_PASSWORD=mysql -d -p 3306:3306 mysql:8.0 \
 	--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 ```
 - `snu` 라는 Database 명, `animals` 라는 Table 명을 각각 사용합니다.
