@@ -7,7 +7,8 @@
 
 
 ## Api Documentation
-- 기본적으로 http://52.78.82.160:8080/docs 에서 Swagger 문서를 볼 수 있습니다
+- 기본적으로 http://52.78.82.160:8080/docs 에서 Swagger 문서를 볼 수 있습니다.
+- 따라서 각 Input, Output 설명은 생략하고, 주의해야할 부분이나 모호한 부분을 README 에서 보강합니다.
 
 ### Get
 - 직접 업로드한 동물들의 정보를 얻어올 수 있는 Api 입니다.
