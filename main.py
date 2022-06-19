@@ -12,7 +12,7 @@ LOCAL_IMAGE_DIR = "/home/ubuntu/lost-animal-images"
 BUCKET_NAME = 'infra-test-831uq8dafq'
 
 
-@app.get("/animals/v2", status_code=200)
+@app.get("/api/animals/v2", status_code=200)
 async def get_animals(num: int):
     try:
         with get_conn() as conn:
@@ -50,7 +50,7 @@ async def get_animals(num: int):
         print(e)
 
 
-@app.post("/animals/v2", status_code=201)
+@app.post("/api/animals/v2", status_code=201)
 async def upload_animal(file: UploadFile, kind: str, located_at: str, feature: str,
                         status: str, sex : str, major_province: str, minor_province: str,
                         last_datetime_of_notice: str) -> None:
