@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, HTTPException
 import uvicorn
+from schema import AnimalInfos, UploadResult
 import pymysql
 import os, uuid
 from utils.db import get_conn
@@ -33,14 +34,12 @@ async def get_animals(num: int):
                     result.append(
                         {
                             "image_url": "{}".format(animal['image_url']),
-                            "notice_number": "{}-{}-{}".format(animal['major_province'], animal['minor_province'], str(animal['id']).zfill(5)),
+                            "notice_number": "{}-{}-{}".format(animal['major_province'], animal['major_province'], str(animal['id']).zfill(5)),
                             "kind": "{}".format(animal['kind']),
-                            "located_at": "{}".format(animal['located_at']),
                             "feature": "{}".format(animal['feature']),
-                            "status": "{}".format(animal['status']),
                             "sex": "{}".format(animal['sex']),
-                            "last_datetime_of_notice": "{}".format(animal['last_datetime_of_notice']),
-                            "created_at": "{}".format(animal['created_at'])
+                            "created_at": "{}".format(animal['created_at']),
+                            "province": "{}".format(animal['major_province'])
                         }
                     )                
                 return {
@@ -51,9 +50,8 @@ async def get_animals(num: int):
 
 
 @app.post("/api/animals/v2", status_code=201)
-async def upload_animal(file: UploadFile, kind: str, located_at: str, feature: str,
-                        status: str, sex : str, major_province: str, minor_province: str,
-                        last_datetime_of_notice: str) -> None:
+async def upload_animal(file: UploadFile, kind: str, feature: str,
+                        sex : str, major_province: str) -> None:
     if file.content_type != "image/jpeg":
         raise HTTPException(status_code=400, detail="Format should be jpeg")
 
@@ -83,37 +81,25 @@ async def upload_animal(file: UploadFile, kind: str, located_at: str, feature: s
                 insert_sql = '''
                 INSERT INTO `animals` (
                     `major_province`,
-                    `minor_province`,
                     `image_url`,
                     `kind`,
-                    `located_at`,
                     `feature`,
-                    `status`,
-                    `sex`,
-                    `last_datetime_of_notice`
+                    `sex`
                 )
                 VALUES (
                     %s, -- major_province
-                    %s, -- minor_province
                     %s, -- image_url
                     %s, -- kind
-                    %s, -- located_at
                     %s, -- feature
-                    %s, -- status
-                    %s, -- sex
-                    %s -- last_datetime_of_notice
+                    %s -- sex
                 )
                 '''
                 cursor.execute(insert_sql, (
                     major_province,
-                    minor_province,
                     "https://{}.s3.ap-northeast-2.amazonaws.com/{}".format(BUCKET_NAME, hashed_filename_with_ext),
                     kind,
-                    located_at,
                     feature,
-                    status,
-                    sex,
-                    last_datetime_of_notice
+                    sex
                 ))
             conn.commit()
 
